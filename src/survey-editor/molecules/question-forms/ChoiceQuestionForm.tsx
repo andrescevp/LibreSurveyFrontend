@@ -5,9 +5,10 @@ import { Button } from '@ui/atoms/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '@ui/molecules/Card';
 import { QuestionTypeSelector } from '../../atoms/QuestionTypeSelector';
 import { ConditionBuilder } from '../ConditionBuilder';
+import { RowColumnManager } from '../RowColumnManager';
 import type { BaseQuestionFormProps, BaseFormData } from './BaseQuestionForm';
 import { createBaseFormData, updateQuestionWithFormData, updateQuestionCondition, handleQuestionTypeChange } from './BaseQuestionForm';
-import type { ElementCondition } from '../../../survey-types';
+import type { ElementCondition, ElementRow, ElementColumn, QuestionRowOptionsChoice, QuestionColumnOptionsChoice } from '../../../survey-types';
 import type { QuestionType } from '../../types';
 
 interface ChoiceQuestionFormData extends BaseFormData {
@@ -231,6 +232,37 @@ export function ChoiceQuestionForm({
                     </form>
                 </CardContent>
             </Card>
+
+            {/* Row and Column Management */}
+            <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <RowColumnManager
+                    title="Response Options"
+                    items={(question as any).rows || []}
+                    onUpdate={(rows: ElementRow<QuestionRowOptionsChoice>[]) => {
+                        const updatedQuestion = { ...question, rows } as any;
+                        onUpdate(updatedQuestion);
+                    }}
+                    type="rows"
+                    questionType="choice"
+                    minItems={1}
+                    maxItems={20}
+                    placeholder="Enter response option"
+                />
+
+                <RowColumnManager
+                    title="Question Items"
+                    items={(question as any).columns || []}
+                    onUpdate={(columns: ElementColumn<QuestionColumnOptionsChoice>[]) => {
+                        const updatedQuestion = { ...question, columns } as any;
+                        onUpdate(updatedQuestion);
+                    }}
+                    type="columns"
+                    questionType="choice"
+                    minItems={0}
+                    maxItems={50}
+                    placeholder="Enter question item"
+                />
+            </div>
 
             {/* Condition Builder */}
             <div className="mt-4">

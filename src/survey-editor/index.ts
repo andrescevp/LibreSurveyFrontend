@@ -7,6 +7,8 @@ export { SurveyPreview } from './organisms/SurveyPreview.tsx';
 export { QuestionItemList } from './molecules/QuestionItemList.tsx';
 export { QuestionFormControls } from './molecules/QuestionFormControls.tsx';
 export { ConditionBuilder } from './molecules/ConditionBuilder.tsx';
+export { RowColumnManager } from './molecules/RowColumnManager.tsx';
+export { RowColumnFormFactory } from './molecules/RowColumnFormFactory.tsx';
 export { SurveyMetaForm } from './molecules/SurveyMetaForm.tsx';
 export { SurveyEditorHeader } from './molecules/SurveyEditorHeader.tsx';
 export { SurveyEditorSidebar } from './molecules/SurveyEditorSidebar.tsx';
