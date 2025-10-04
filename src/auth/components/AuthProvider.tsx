@@ -5,6 +5,7 @@ import { Loader2 } from 'lucide-react';
 import { store, persistor } from '../../store';
 import type { AuthContextType } from '../types';
 import { useAuth } from '../hooks/useAuth';
+import { useApiAuthSync } from '../hooks/useApiAuthSync';
 
 /**
  * Auth Context
@@ -32,6 +33,9 @@ const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
     const auth = useAuth();
     const [isInitialized, setIsInitialized] = React.useState(false);
+
+    // Sync auth state with API client
+    useApiAuthSync();
 
     // Mark as initialized after first auth check
     useEffect(() => {

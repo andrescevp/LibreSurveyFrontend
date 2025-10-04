@@ -8,6 +8,7 @@ export {
   useRedirectIfAuthenticated,
   default as useAuthGuardHook 
 } from './useAuthGuard';
+export { useApiAuthSync } from './useApiAuthSync';
 
 // Re-export types for convenience
 export type { 

@@ -25,7 +25,7 @@ Choose the appropriate React Query feature type:
 
 #### File Location Pattern:
 ```
-src/lib/queries/{feature}/
+src/features/{feature}/
   ├── index.ts                    # Main exports
   ├── queries.ts                  # Query hooks (useQuery, useInfiniteQuery)
   ├── mutations.ts                # Mutation hooks (useMutation)
@@ -37,7 +37,7 @@ src/lib/queries/{feature}/
 
 #### Example for "surveys" feature:
 ```
-src/lib/queries/surveys/
+src/features/surveys/
   ├── index.ts
   ├── queries.ts        # useSurveys, useSurvey, useInfiniteSurveys
   ├── mutations.ts      # useCreateSurvey, useUpdateSurvey, useDeleteSurvey
@@ -52,7 +52,7 @@ src/lib/queries/surveys/
 Always create a centralized query key factory for consistent cache management:
 
 ```tsx
-// src/lib/queries/{feature}/keys.ts
+// src/features/{feature}/keys.ts
 export const {feature}Keys = {
   // Base keys
   all: ['{feature}'] as const,
@@ -79,7 +79,7 @@ export type {Feature}QueryKey = ReturnType<typeof {feature}Keys[keyof typeof {fe
 Create clean, reusable API service functions:
 
 ```tsx
-// src/lib/queries/{feature}/services.ts
+// src/features/{feature}/services.ts
 import { api } from '@lib/api'; // Your axios instance or fetch wrapper
 
 // Base interfaces
@@ -155,7 +155,7 @@ export const {feature}Service = {
 Create query hooks following TanStack Query v5 patterns:
 
 ```tsx
-// src/lib/queries/{feature}/queries.ts
+// src/features/{feature}/queries.ts
 import { 
   useQuery, 
   useInfiniteQuery, 
@@ -263,7 +263,7 @@ export function use{Feature}Related(
 Create mutation hooks with proper optimistic updates and error handling:
 
 ```tsx
-// src/lib/queries/{feature}/mutations.ts
+// src/features/{feature}/mutations.ts
 import { 
   useMutation, 
   useQueryClient,
@@ -456,7 +456,7 @@ export function useBulkDelete{Feature}s(
 Create utility functions for common query operations:
 
 ```tsx
-// src/lib/queries/{feature}/utils.ts
+// src/features/{feature}/utils.ts
 import { useQueryClient } from '@tanstack/react-query';
 import { {feature}Keys } from './keys';
 import { {feature}Service } from './services';
@@ -615,7 +615,7 @@ export const {feature}QueryUtils = {
 Define comprehensive TypeScript interfaces:
 
 ```tsx
-// src/lib/queries/{feature}/types.ts
+// src/features/{feature}/types.ts
 
 // Base entity interface
 export interface {Feature} {
@@ -714,7 +714,7 @@ export interface {Feature}MutationOptions {
 Create a clean main export file:
 
 ```tsx
-// src/lib/queries/{feature}/index.ts
+// src/features/{feature}/index.ts
 
 // Query hooks
 export {
@@ -768,7 +768,7 @@ export type { {Feature}QueryKey } from './keys';
 
 ### 10. Global Query Configuration
 
-Set up global React Query configuration:
+Global React Query configuration:
 
 ```tsx
 // src/lib/queries/queryClient.ts
@@ -823,76 +823,7 @@ queryClient.setQueryDefaults(['query'], {
 });
 ```
 
-### 11. React Query Provider Setup
-
-Set up the React Query provider:
-
-```tsx
-// src/App.tsx or src/main.tsx
-import { QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { queryClient } from '@lib/queries/queryClient';
-
-function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      {/* Your app components */}
-      <YourAppContent />
-      
-      {/* Development tools */}
-      {process.env.NODE_ENV === 'development' && (
-        <ReactQueryDevtools initialIsOpen={false} />
-      )}
-    </QueryClientProvider>
-  );
-}
-```
-
-### 12. Error Boundary Integration
-
-Create React Query compatible error boundaries:
-
-```tsx
-// src/lib/queries/ErrorBoundary.tsx
-import React from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
-import { useQueryErrorResetBoundary } from '@tanstack/react-query';
-
-interface QueryErrorBoundaryProps {
-  children: React.ReactNode;
-  fallback?: React.ComponentType<{ error: Error; resetErrorBoundary: () => void }>;
-}
-
-export function QueryErrorBoundary({ children, fallback: Fallback }: QueryErrorBoundaryProps) {
-  const { reset } = useQueryErrorResetBoundary();
-
-  return (
-    <ErrorBoundary
-      onReset={reset}
-      fallbackRender={({ error, resetErrorBoundary }) => 
-        Fallback ? (
-          <Fallback error={error} resetErrorBoundary={resetErrorBoundary} />
-        ) : (
-          <div role="alert" className="p-4 border border-destructive rounded-lg">
-            <h2 className="text-lg font-semibold text-destructive">Something went wrong</h2>
-            <pre className="mt-2 text-sm text-muted-foreground">{error.message}</pre>
-            <button 
-              onClick={resetErrorBoundary}
-              className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md"
-            >
-              Try again
-            </button>
-          </div>
-        )
-      }
-    >
-      {children}
-    </ErrorBoundary>
-  );
-}
-```
-
-### 13. Usage Examples
+### 11. Usage Examples
 
 #### Basic Query Usage:
 ```tsx
