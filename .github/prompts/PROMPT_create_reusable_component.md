@@ -3,9 +3,11 @@ mode: 'agent'
 description: 'Create reusable react component following Atomic Design'
 ---
 
-**Create a new reusable component using atomic design**
+**Create a new reusable component or refactor an existing one using atomic design**
 
 Ask any needed information to the user before start if it is not clear or you need more details.
+
+**KEEP ALL COMPONENTS UNDER 150 LINE**
 
 ## Step-by-Step Instructions
 
@@ -20,16 +22,24 @@ Choose the appropriate atomic design level:
 
 ### 2. Create Component File Structure
 
+- **Subcomponents of complex components such as molecules, organisms or templates must be place in the right level**
+- **Use hooks to manage the logic of components**
+- **One component per file**
+
 #### File Location Pattern:
 ```
 src/ui/{level}/{ComponentName}.tsx
+src/ui/{level}/hooks/use{Logic}.tsx
 src/ui/{level}/{ComponentName}.stories.ts (optional but recommended)
 src/ui/{level}/index.ts (for exports)
+src/ui/{lowerLevel}/{ComponentName}/{SubComponent}.tsx
+src/ui/{lowerLevel}/{ComponentName}/index.tsx
 ```
 
 #### Example for an atom called "Button":
 ```
 src/ui/atoms/Button.tsx
+src/ui/atoms/hooks/useButton.tsx
 src/ui/atoms/Button.stories.ts
 src/ui/atoms/index.ts
 ```

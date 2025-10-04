@@ -1,53 +1,8 @@
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import './App.css'
-import { AuthProvider, ProtectedRoute, PublicRoute, LoginForm, useAuth } from './auth'
-import { SurveyEditor } from './survey-editor'
-import type { Survey } from './survey-types'
-
-// Dashboard Component (protected)
-function Dashboard() {
-  const { user, logout } = useAuth()
-
-  const handleSaveSurvey = (updatedSurvey: Survey) => {
-    console.log('Survey saved:', updatedSurvey)
-  }
-
-  const handlePreviewSurvey = (surveyToPreview: Survey) => {
-    console.log('Preview survey:', surveyToPreview)
-  }
-
-  return (
-    <div className="h-screen overflow-hidden">
-      {/* Simple header with user info and logout */}
-      <div className="bg-background border-b border-border px-4 py-2 flex justify-between items-center">
-        <h1 className="text-lg font-semibold text-foreground">LibreSurvey</h1>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-muted-foreground">
-            Welcome, {user?.username}
-          </span>
-          <button
-            onClick={logout}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Sign out
-          </button>
-        </div>
-      </div>
-
-      {/* Main content */}
-      <SurveyEditor
-        initialSurvey={{
-          code: 'demo_survey',
-          title: 'Demo Survey',
-          description: 'A sample survey to demonstrate the editor',
-        }}
-        onSave={handleSaveSurvey}
-        onPreview={handlePreviewSurvey}
-      />
-    </div>
-  )
-}
+import { AuthProvider, ProtectedRoute, PublicRoute, LoginForm } from './auth'
+import { HomePage, SurveyEditorPage } from './pages'
 
 // Login Page Component (public)
 function LoginPage() {
@@ -87,16 +42,32 @@ function App() {
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <HomePage />
               </ProtectedRoute>
             }
           />
 
-          {/* Redirect root to dashboard */}
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route
+            path="/editor"
+            element={
+              <ProtectedRoute>
+                <SurveyEditorPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Home route */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Catch all route */}
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
     </AuthProvider>

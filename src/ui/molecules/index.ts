@@ -41,6 +41,17 @@ export type {
   BreadcrumbItem 
 } from './Breadcrumb';
 
+// Export new refactored components
+export { SearchBar } from './SearchBar';
+export type { SearchBarProps } from './SearchBar';
+
+export { UserProfile } from './UserProfile';
+export type { UserProfileProps, UserProfileData } from './UserProfile';
+
+export { NavigationItem } from './NavigationItem';
+export type { NavigationItemProps, NavigationItemData } from './NavigationItem';
+
+
 // Export ToggleGroup components
 export { ToggleGroup, ToggleGroupItem } from './ToggleGroup';
 
