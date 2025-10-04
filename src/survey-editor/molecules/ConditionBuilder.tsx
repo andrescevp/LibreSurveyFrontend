@@ -2,10 +2,10 @@ import { useFieldArray, useForm, Controller } from 'react-hook-form';
 import { Button } from '@ui/atoms/Button';
 import { Input } from '@ui/atoms/Input';
 import { Select } from '@ui/atoms/Select';
-import { Switch } from '@ui/atoms/Switch';
-import { Card, CardHeader, CardTitle, CardContent } from '@ui/molecules/Card';
+import { Toggle } from '@ui/atoms/Toggle';
+import { ToggleGroup, ToggleGroupItem } from '@ui/molecules/ToggleGroup';
 import { DeleteButton } from '../atoms/DeleteButton';
-import { Plus } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import { OPERATORS } from '../types';
 import type { ElementCondition } from '../../survey-types';
 
@@ -57,13 +57,6 @@ export function ConditionBuilder({
         name: 'rules',
     });
 
-    const actionOptions = [
-        { value: 'show', label: 'Show' },
-        { value: 'require', label: 'Require' },
-        { value: 'set', label: 'Set' },
-        { value: 'iterate', label: 'Iterate' },
-    ];
-
     const onSubmit = (data: ConditionFormData) => {
         if (data.rules.length === 0 || data.rules.every(rule => !rule.code)) {
             onUpdate(null);
@@ -104,150 +97,170 @@ export function ConditionBuilder({
     };
 
     return (
-        <Card className={className}>
-            <CardHeader>
-                <CardTitle className="text-base">Condition Settings</CardTitle>
-            </CardHeader>
+        <div className={`p-4 border rounded-lg bg-card space-y-4 ${className || ''}`}>
+            <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium text-foreground">Conditions</h3>
+                <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={clearCondition}
+                    className="text-xs h-6 px-2"
+                >
+                    <X className="w-3 h-3 mr-1" />
+                    Clear
+                </Button>
+            </div>
 
-            <CardContent>
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Action</label>
-                        <Controller
-                            name="action"
-                            control={control}
-                            render={({ field }) => (
-                                <Select
-                                    value={actionOptions.find(opt => opt.value === field.value)}
-                                    onChange={(option: any) => field.onChange(option?.value)}
-                                    options={actionOptions}
-                                    placeholder="Select action"
-                                />
-                            )}
-                        />
-                    </div>
-
-                    <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                            <label className="text-sm font-medium">Rules</label>
-                            <Button
-                                type="button"
-                                variant="outline"
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+                {/* Action Toggle Group */}
+                <div className="space-y-2">
+                    <label className="text-xs font-medium text-muted-foreground">Action</label>
+                    <Controller
+                        name="action"
+                        control={control}
+                        render={({ field }) => (
+                            <ToggleGroup
+                                type="single"
+                                value={field.value}
+                                onValueChange={(value) => field.onChange(value || 'show')}
                                 size="sm"
-                                onClick={addRule}
+                                variant="outline"
                             >
-                                <Plus className="w-4 h-4 mr-1" />
-                                Add Rule
-                            </Button>
-                        </div>
+                                <ToggleGroupItem value="show">Show</ToggleGroupItem>
+                                <ToggleGroupItem value="require">Require</ToggleGroupItem>
+                                <ToggleGroupItem value="set">Set</ToggleGroupItem>
+                                <ToggleGroupItem value="iterate">Iterate</ToggleGroupItem>
+                            </ToggleGroup>
+                        )}
+                    />
+                </div>
 
-                        {fields.map((field, index) => (
-                            <div key={field.id} className="border rounded-lg p-3 space-y-3">
-                                {index > 0 && (
-                                    <div>
-                                        <Controller
-                                            name={`rules.${index}.gate`}
-                                            control={control}
-                                            render={({ field }) => (
-                                                <Select
-                                                    value={{ value: field.value || 'and', label: field.value === 'or' ? 'OR' : 'AND' }}
-                                                    onChange={(option: any) => field.onChange(option?.value)}
-                                                    options={[
-                                                        { value: 'and', label: 'AND' },
-                                                        { value: 'or', label: 'OR' },
-                                                    ]}
-                                                />
-                                            )}
-                                        />
-                                    </div>
-                                )}
-
-                                <div className="grid grid-cols-1 md:grid-cols-5 gap-2 items-end">
-                                    <div className="space-y-1">
-                                        <label className="text-xs text-muted-foreground">Negate</label>
-                                        <Controller
-                                            name={`rules.${index}.negate`}
-                                            control={control}
-                                            render={({ field }) => (
-                                                <Switch
-                                                    checked={field.value || false}
-                                                    onChange={(e) => field.onChange(e.target.checked)}
-                                                    size="sm"
-                                                />
-                                            )}
-                                        />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <label className="text-xs text-muted-foreground">Question</label>
-                                        <Controller
-                                            name={`rules.${index}.code`}
-                                            control={control}
-                                            render={({ field }) => (
-                                                <Select
-                                                    value={availableQuestions.find(q => q.value === field.value)}
-                                                    onChange={(option: any) => field.onChange(option?.value || '')}
-                                                    options={availableQuestions}
-                                                    placeholder="Select question"
-                                                />
-                                            )}
-                                        />
-                                    </div>
-
-                                    <div className="space-y-1">
-                                        <label className="text-xs text-muted-foreground">Operator</label>
-                                        <Controller
-                                            name={`rules.${index}.operator`}
-                                            control={control}
-                                            render={({ field }) => (
-                                                <Select
-                                                    value={OPERATORS.find(op => op.value === field.value)}
-                                                    onChange={(option: any) => field.onChange(option?.value)}
-                                                    options={OPERATORS}
-                                                />
-                                            )}
-                                        />
-                                    </div>
-
-                                    <div className="space-y-1">
-                                        <label className="text-xs text-muted-foreground">Value</label>
-                                        <Controller
-                                            name={`rules.${index}.value`}
-                                            control={control}
-                                            render={({ field }) => (
-                                                <Input
-                                                    {...field}
-                                                    placeholder="Enter value"
-                                                />
-                                            )}
-                                        />
-                                    </div>
-
-                                    <div className="flex justify-center items-center pt-6">
-                                        <DeleteButton
-                                            onDelete={() => removeRule(index)}
-                                            size="sm"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="flex gap-2 pt-2">
-                        <Button type="submit" size="sm">
-                            Apply Condition
-                        </Button>
+                {/* Rules */}
+                <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                        <label className="text-xs font-medium text-muted-foreground">Rules</label>
                         <Button
                             type="button"
-                            variant="outline"
+                            variant="ghost"
                             size="sm"
-                            onClick={clearCondition}
+                            onClick={addRule}
+                            className="text-xs h-6 px-2"
                         >
-                            Clear
+                            <Plus className="w-3 h-3 mr-1" />
+                            Add
                         </Button>
                     </div>
-                </form>
-            </CardContent>
-        </Card>
+
+                    {fields.map((field, index) => (
+                        <div key={field.id} className="p-3 border rounded bg-muted/20 space-y-2">
+                            {/* Gate selector for subsequent rules */}
+                            {index > 0 && (
+                                <Controller
+                                    name={`rules.${index}.gate`}
+                                    control={control}
+                                    render={({ field }) => (
+                                        <ToggleGroup
+                                            type="single"
+                                            value={field.value || 'and'}
+                                            onValueChange={(value) => field.onChange(value || 'and')}
+                                            size="sm"
+                                            variant="outline"
+                                            className="w-fit"
+                                        >
+                                            <ToggleGroupItem value="and">AND</ToggleGroupItem>
+                                            <ToggleGroupItem value="or">OR</ToggleGroupItem>
+                                        </ToggleGroup>
+                                    )}
+                                />
+                            )}
+
+                            {/* Rule configuration */}
+                            <div className="grid grid-cols-12 gap-2 items-center">
+                                {/* Negate Toggle */}
+                                <div className="col-span-2">
+                                    <Controller
+                                        name={`rules.${index}.negate`}
+                                        control={control}
+                                        render={({ field }) => (
+                                            <Toggle
+                                                pressed={field.value || false}
+                                                onPressedChange={field.onChange}
+                                                size="sm"
+                                                variant="outline"
+                                                aria-label="Negate condition"
+                                            >
+                                                NOT
+                                            </Toggle>
+                                        )}
+                                    />
+                                </div>
+
+                                {/* Question Select */}
+                                <div className="col-span-3">
+                                    <Controller
+                                        name={`rules.${index}.code`}
+                                        control={control}
+                                        render={({ field }) => (
+                                            <Select
+                                                value={availableQuestions.find(q => q.value === field.value)}
+                                                onChange={(option: any) => field.onChange(option?.value || '')}
+                                                options={availableQuestions}
+                                                placeholder="Question"
+                                            />
+                                        )}
+                                    />
+                                </div>
+
+                                {/* Operator Select */}
+                                <div className="col-span-2">
+                                    <Controller
+                                        name={`rules.${index}.operator`}
+                                        control={control}
+                                        render={({ field }) => (
+                                            <Select
+                                                value={OPERATORS.find(op => op.value === field.value)}
+                                                onChange={(option: any) => field.onChange(option?.value)}
+                                                options={OPERATORS}
+                                            />
+                                        )}
+                                    />
+                                </div>
+
+                                {/* Value Input */}
+                                <div className="col-span-4">
+                                    <Controller
+                                        name={`rules.${index}.value`}
+                                        control={control}
+                                        render={({ field }) => (
+                                            <Input
+                                                {...field}
+                                                placeholder="Value"
+                                                className="text-sm"
+                                            />
+                                        )}
+                                    />
+                                </div>
+
+                                {/* Delete Button */}
+                                <div className="col-span-1 flex justify-center">
+                                    <DeleteButton
+                                        onDelete={() => removeRule(index)}
+                                        size="sm"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Apply Button */}
+                <div className="pt-1">
+                    <Button type="submit" size="sm" className="w-full">
+                        Apply Condition
+                    </Button>
+                </div>
+            </form>
+        </div>
     );
 }

@@ -2,7 +2,6 @@ import { useForm, Controller } from 'react-hook-form';
 import { Input } from '@ui/atoms/Input';
 import { Switch } from '@ui/atoms/Switch';
 import { Button } from '@ui/atoms/Button';
-import { Select } from '@ui/atoms/Select';
 import { Card, CardHeader, CardTitle, CardContent } from '@ui/molecules/Card';
 import { QuestionTypeSelector } from '../../atoms/QuestionTypeSelector';
 import { ConditionBuilder } from '../ConditionBuilder';

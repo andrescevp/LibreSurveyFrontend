@@ -70,7 +70,7 @@ export interface ElementConditionRule {
     code: string;
     rowCode?: string;
     columnCode?: string;
-    operator?: string;
+    operator?: "=" | "!=" | ">" | "<" | ">=" | "<=" | "contains" | "not_contains" | "set" | "not_set";
     value?: string;
     gate?: "and" | "or";
 }
