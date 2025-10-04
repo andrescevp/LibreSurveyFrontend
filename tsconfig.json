@@ -4,6 +4,7 @@
     "paths": {
       "@ui/*": ["./src/ui/*"],
       "@lib/*": ["./src/lib/*"],
+      "@auth/*": ["./src/auth/*"]
     }
   },
   "files": [],
